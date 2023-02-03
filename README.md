@@ -4,7 +4,7 @@
 ## Programmers
 ---
 - 2020 KAKAO BLIND RECRUITMENT
-    - [문자열압축](https://github.com/hiyoojeong/algorithm/blob/main/%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%A8%B8%EC%8A%A4/2020%20KAKAO%20BLIND%20RECRUITMENT/%EB%AC%B8%EC%9E%90%EC%97%B4%EC%95%95%EC%B6%95.md)
+    - [문자열 압축](https://github.com/hiyoojeong/algorithm/blob/main/%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%A8%B8%EC%8A%A4/2020%20KAKAO%20BLIND%20RECRUITMENT/%EB%AC%B8%EC%9E%90%EC%97%B4%EC%95%95%EC%B6%95.md)
 
 - 2022 KAKAO BLIND RECRUITMENT
     - [이모티콘 할인행사](https://github.com/hiyoojeong/algorithm/blob/main/%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%A8%B8%EC%8A%A4/2020%20KAKAO%20BLIND%20RECRUITMENT/%EB%AC%B8%EC%9E%90%EC%97%B4%EC%95%95%EC%B6%95.md)
