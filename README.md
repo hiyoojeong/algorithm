@@ -6,6 +6,9 @@
 - 2020 KAKAO BLIND RECRUITMENT
     - [문자열 압축](https://github.com/hiyoojeong/algorithm/blob/main/%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%A8%B8%EC%8A%A4/2020%20KAKAO%20BLIND%20RECRUITMENT/%EB%AC%B8%EC%9E%90%EC%97%B4%EC%95%95%EC%B6%95.java)
 
+- 2020 KAKAO BLIND RECRUITMENT
+    - [합승 택시 요금]()
+
 - 2022 KAKAO BLIND RECRUITMENT
     - [이모티콘 할인행사](https://github.com/hiyoojeong/algorithm/blob/main/%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%A8%B8%EC%8A%A4/2022%20KAKAO%20BLIND%20RECRUITMENT/%EC%9D%B4%EB%AA%A8%ED%8B%B0%EC%BD%98%20%ED%95%A0%EC%9D%B8%ED%96%89%EC%82%AC.java)
 
@@ -20,4 +23,4 @@
     - [점 찍기](https://github.com/hiyoojeong/algorithm/blob/main/%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%A8%B8%EC%8A%A4/%EC%A0%90%20%EC%B0%8D%EA%B8%B0.java)
     - [타겟 넘버](https://github.com/hiyoojeong/algorithm/blob/main/%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%A8%B8%EC%8A%A4/%ED%83%80%EA%B2%9F%20%EB%84%98%EB%B2%84.java)
     - [테이블 해시 함수](https://github.com/hiyoojeong/algorithm/blob/main/%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%A8%B8%EC%8A%A4/%ED%85%8C%EC%9D%B4%EB%B8%94%20%ED%95%B4%EC%8B%9C%20%ED%95%A8%EC%88%98.java)
-    
+    - [롤케이크 자르기]()
