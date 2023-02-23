@@ -5,7 +5,6 @@ class Solution {
     public int solution(String[] babbling) {
         int answer = 0;
         
-        String[] words = { "aya", "ye", "woo", "ma" };
 		for (String bab : babbling) {
 			bab = bab.replaceAll("aya|ye|woo|ma", "");
 
