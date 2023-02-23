@@ -24,3 +24,5 @@
     - [타겟 넘버](https://github.com/hiyoojeong/algorithm/blob/main/%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%A8%B8%EC%8A%A4/%ED%83%80%EA%B2%9F%20%EB%84%98%EB%B2%84.java)
     - [테이블 해시 함수](https://github.com/hiyoojeong/algorithm/blob/main/%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%A8%B8%EC%8A%A4/%ED%85%8C%EC%9D%B4%EB%B8%94%20%ED%95%B4%EC%8B%9C%20%ED%95%A8%EC%88%98.java)
     - [롤케이크 자르기](https://github.com/hiyoojeong/algorithm/blob/main/%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%A8%B8%EC%8A%A4/%EB%A1%A4%EC%BC%80%EC%9D%B4%ED%81%AC%20%EC%9E%90%EB%A5%B4%EA%B8%B0.java)
+    - [택배상자](https://github.com/hiyoojeong/algorithm/blob/main/%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%A8%B8%EC%8A%A4/%ED%83%9D%EB%B0%B0%EC%83%81%EC%9E%90.java)
+    - [연속 부분 수열 합의 개수](https://github.com/hiyoojeong/algorithm/blob/main/%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%A8%B8%EC%8A%A4/%EC%97%B0%EC%86%8D%20%EB%B6%80%EB%B6%84%20%EC%88%98%EC%97%B4%20%ED%95%A9%EC%9D%98%20%EA%B0%9C%EC%88%98.java)
