@@ -4,8 +4,8 @@
 import java.util.ArrayList;
 
 class Solution {
-    public int solution(int[][] data, int col, int row_begin, int row_end) {
-        int answer = 0;
+	public int solution(int[][] data, int col, int row_begin, int row_end) {
+		int answer = 0;
 
 		// col 번째 컬럼을 기준으로 오름차순 정렬, 동일한 경우 첫 번째 컬럼을 기준으로 내림차순 정렬
 		ArrayList<Integer> order = new ArrayList<Integer>();
@@ -38,7 +38,7 @@ class Solution {
 			}
 			answer ^= sum;
 		}
-        
-        return answer;
-    }
+
+		return answer;
+	}
 }

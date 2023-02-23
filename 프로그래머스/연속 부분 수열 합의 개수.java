@@ -4,8 +4,8 @@
 import java.util.HashSet;
 
 class Solution {
-    public int solution(int[] elements) {
-       int answer = 0;
+	public int solution(int[] elements) {
+		int answer = 0;
 
 		HashSet<Integer> set = new HashSet<>();
 		int N = elements.length;
@@ -22,5 +22,5 @@ class Solution {
 
 		answer = set.size();
 		return answer;
-    }
+	}
 }
