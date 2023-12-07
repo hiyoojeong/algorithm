@@ -5,4 +5,4 @@
 46 solved
 
 ## BOJ
-65 solved
+67 solved
