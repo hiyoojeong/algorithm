@@ -62,11 +62,17 @@ public class Main {
 
 		while (!queue.isEmpty()) {
 			Node now = queue.poll();
+			int nowNode = now.idx;
 
+			// 현재 정점과 인접한 정점을 확인한다.
 			for (Node next : graph[now.idx]) {
 				int nextNode = next.idx;
-				if (now.cost + next.cost < dist[nextNode]) {
-					dist[nextNode] = now.cost + next.cost;
+
+				// dist[nowNode] + next.cost: 현재 정점을 거쳐서 다음 정점으로 가는 비용
+				// dist[nextNode]: 기존에 알고 있던 다음 정점으로 가는 비용
+				// -> '현재 정점을 거쳐서 다음 정점으로 가는 비용'이 '기존에 알고있던 다음 정점으로 가는 비용'보다 저렴하므로, dist[nextNode]를 갱신한다.
+				if (dist[nowNode] + next.cost < dist[nextNode]) {
+					dist[nextNode] = dist[nowNode] + next.cost;
 					queue.add(new Node(nextNode, dist[nextNode]));
 				}
 			}
