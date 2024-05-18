@@ -19,8 +19,9 @@ public class Main {
 		S = Long.parseLong(br.readLine());
 
 		long answer = 1;
+		// 1을 제외하고 결과를 구한다.
 		if (S != 1) {
-			answer = binarySearch() - 1;
+			answer = binarySearch();
 		}
 
 		System.out.println(answer);
@@ -34,6 +35,7 @@ public class Main {
 		while (left < right) {
 			long n = (left + right) / 2;
 
+			// 1부터 n까지의 합이 S를 넘는 최소값을 구한다.
 			if (n + 1 > (2 * S) / n) {
 				right = n;
 			} else {
@@ -41,7 +43,8 @@ public class Main {
 			}
 		}
 
-		return right;
+		// 결과의 -1만 하면 된다.
+		return right - 1;
 	}
 
 }
