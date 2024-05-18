@@ -60,10 +60,6 @@ public class Main {
 	}
 
 	public static void dijkstra(int startNode) {
-		if (startNode > D) {
-			return;
-		}
-
 		// dist[startNode + 1]: 기존 알고 있던 다음 위치까지 가는 거리
 		// dist[startNode] + 1: 현재 위치에서 다음 위치까지 가는 거리
 		// '기존 알고 있던 다음 위치까지 가는 거리'가 '현재 위치에서 다음 위치까지 가는 거리'보다 짧으면, 업데이트한다.
