@@ -28,7 +28,7 @@ public class Main {
 		// 숫자와 숫자의 빈도를 저장한다.
 		Map<Integer, Number> map = new HashMap<>();
 
-		// 숫자의 빈도가 많은 순으로 정렬한다.
+		// 숫자의 빈도가 많은 순, 먼저 나온 순으로 정렬한다.
 		Queue<Number> pq = new PriorityQueue<>(new Comparator<Number>() {
 			public int compare(Number n1, Number n2) {
 				return n2.cnt != n1.cnt ? n2.cnt - n1.cnt : n1.order - n2.order;
@@ -52,12 +52,12 @@ public class Main {
 			}
 		}
 
-		// 숫자의 빈도가 많은 순으로 정렬한다.
+		// 숫자의 빈도가 많은 순, 먼저 나온 순으로 정렬한다.
 		for (int number : map.keySet()) {
 			pq.add(new Number(number, map.get(number).cnt, map.get(number).order));
 		}
 
-		// 숫자의 빈도가 많은 순으로 정렬하여 수를 저장한다.
+		// 정렬된 정보대로 수를 저장한다.
 		StringBuffer answer = new StringBuffer();
 		while (!pq.isEmpty()) {
 			Number number = pq.poll();
