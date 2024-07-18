@@ -32,7 +32,7 @@ public class Main {
             }
         }
 
-        dfs(1, 1, 0, 0);
+        dfs(1, 0, 0);
 
         if (answer == Integer.MAX_VALUE) {
             answer = 0;
@@ -41,13 +41,13 @@ public class Main {
 
     }
 
-    public static void dfs(int r, int c, int cost, int cnt) {
+    public static void dfs(int r, int cost, int cnt) {
         if (cnt == CNT) {
             answer = Math.min(answer, cost);
             return;
         }
 
-        for (int i = 1; i < N - 1; i++) {
+        for (int i = r; i < N - 1; i++) {
             for (int j = 1; j < N - 1; j++) {
 
                 // 씨앗을 심을 수 있는 장소라면
@@ -79,7 +79,7 @@ public class Main {
                         }
 
                         // 다른 꽃을 심으러 떠난다.
-                        dfs(i, j, cost + sum, cnt + 1);
+                        dfs(i, cost + sum, cnt + 1);
 
                         // 심었던 흔적을 지운다.
                         for (int k = 0; k < 5; k++) {
