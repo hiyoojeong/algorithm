@@ -36,14 +36,14 @@ public class Main {
 			int left = 0, right = M - 1;
 			while (left <= right) {
 				int mid = (left + right) / 2;
-				double dist = Math.sqrt(Math.pow(x - parts[mid], 2) + Math.pow(y - 0, 2));
+				double dist = Math.abs(x - parts[mid]) + y;
 
 				// 동물과 사대 사이 거리가 사정거리 내라면, 동물을 잡을 수 있다.
 				if (dist <= L) {
 					cnt++;
 					break;
 				}
-				// 동물과 사대 사이 거리가 사정거리 밖에라면, 동물을 잡을 수 없다.
+				// 동물과 사대 사이 거리가 사정거리 밖이라면, 동물을 잡을 수 없다.
 				// 사대 거리를 더 좁혀야 한다.
 				else {
 					// 동물이 사대보다 왼쪽에 있다면, 현대 사대의 왼쪽을 확인해야 한다.
