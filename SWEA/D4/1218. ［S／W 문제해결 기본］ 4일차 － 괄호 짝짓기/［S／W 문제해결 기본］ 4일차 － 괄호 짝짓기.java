@@ -1,7 +1,7 @@
 import java.util.Scanner;
 import java.util.Stack;
 
-// 괄호 짝짓기
+// 괄호 짝짓기 - stack
 public class Solution {
 
 	static final int TRUE = 1;
@@ -37,6 +37,11 @@ public class Solution {
 			}
 			// 닫힌 괄호는 stack에서 가져온 괄호롸 짝이 맞아야 한다.
 			else {
+				// stack에서 가져온 괄호가 없는 경우 -> 유효하지 않다고 판단
+				if(stack.isEmpty()) {
+					return FALSE;
+				}
+				
 				// stack에서 가져온 괄호
 				char pair_ch = stack.pop();
 
@@ -46,7 +51,7 @@ public class Solution {
 					continue;
 				}
 
-				// 짝이 안 맞는 경우
+				// 짝이 안 맞는 경우 -> 유효하지 않다고 판단
 				return FALSE;
 			}
 		}
