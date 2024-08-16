@@ -1,50 +1,48 @@
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.util.StringTokenizer;
+import java.util.Scanner;
 
+// 햄버거 다이어트
 public class Solution {
 
-	public static void main(String[] args) throws Exception {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		StringTokenizer st;
-		StringBuffer sb = new StringBuffer();
+	static int N, L;
+	static int[] calories;
+	static int[] scores;
 
-		int T = Integer.parseInt(br.readLine());
-		for (int t = 1; t <= T; t++) {
-			st = new StringTokenizer(br.readLine());
-			int N = Integer.parseInt(st.nextToken()); // 재료의 수
-			int L = Integer.parseInt(st.nextToken()); // 제한 칼로리
+	public static void main(String[] args) {
+		Scanner sc = new Scanner(System.in);
+		int T = sc.nextInt();
 
-			int[] scores = new int[N + 1]; // 맛에 대한 점수
-			int[] calories = new int[N + 1]; // 칼로리
+		StringBuffer answer = new StringBuffer();
+		for (int test_case = 1; test_case <= T; test_case++) {
+			N = sc.nextInt(); // 재료의 수
+			L = sc.nextInt(); // 제한 칼로리
 
-			for (int i = 1; i <= N; i++) {
-				st = new StringTokenizer(br.readLine());
-
-				int score = Integer.parseInt(st.nextToken());
-				int calorie = Integer.parseInt(st.nextToken());
-
-				scores[i] = score;
-				calories[i] = calorie;
+			calories = new int[N];
+			scores = new int[N];
+			for (int i = 0; i < N; i++) {
+				scores[i] = sc.nextInt();
+				calories[i] = sc.nextInt();
 			}
-
-			int answer = solution(N, L, scores, calories);
-
-			sb.append("#").append(t).append(" ").append(answer).append("\n");
+			
+			int maxScore = solution();
+			answer.append(String.format("#%d %d\n", test_case, maxScore));
 		}
 
-		System.out.println(sb);
+		System.out.println(answer);
+
+		sc.close();
+
 	}
 
-	public static int solution(int N, int L, int[] scores, int[] calories) {
-
+	public static int solution() {
+		// dp[i] : i 칼로리까지의 최대 햄버거 점수
 		int[] dp = new int[L + 1];
-		
-		// 가방 문제
-		// dp[j]: j 칼로리까지 햄버거의 최대 점수
-		for (int i = 1; i <= N; i++) {
+
+		// i번째 재료까지 선택했을 때
+		for (int i = 0; i < N; i++) {
+			// j 칼로리까지의 최대 햄버거 점수를 계산한다.
 			for (int j = L; j - calories[i] >= 0; j--) {
-				dp[j] = Math.max(dp[j], scores[i] + dp[j - calories[i]]);
+				// i번째 재료를 선택하는 경우, i번쨰 재료를 선택하지 않는 경우 중에 더 큰 점수를 선택한다.
+				dp[j] = Math.max(dp[j - calories[i]] + scores[i], dp[j]);
 			}
 		}
 
