@@ -1,60 +1,48 @@
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.util.StringTokenizer;
+import java.util.Scanner;
 
 // 장훈이의 높은 선반
 public class Solution {
 
 	static int N, B;
 	static int[] heights;
-	static int minSum;
 
-	public static void main(String[] args) throws Exception {
+	static int minDist;
 
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		StringTokenizer st;
-		StringBuffer sb = new StringBuffer();
+	public static void main(String[] args) {
+		Scanner sc = new Scanner(System.in);
+		int T = sc.nextInt();
 
-		int T = Integer.parseInt(br.readLine());
-		for (int t = 1; t <= T; t++) {
-			st = new StringTokenizer(br.readLine());
-			N = Integer.parseInt(st.nextToken()); // 직원의 수
-			B = Integer.parseInt(st.nextToken()); // 선반 높이
+		StringBuffer answer = new StringBuffer();
+		for (int test_case = 1; test_case <= T; test_case++) {
 
-			heights = new int[N]; // 직원의 키
+			N = sc.nextInt();
+			B = sc.nextInt();
 
-			st = new StringTokenizer(br.readLine());
+			heights = new int[N];
 			for (int i = 0; i < N; i++) {
-				heights[i] = Integer.parseInt(st.nextToken());
+				heights[i] = sc.nextInt();
 			}
-			
-			minSum = Integer.MAX_VALUE;
-			dfs(0, 0);
 
-			int answer = minSum - B;
-			sb.append("#").append(t).append(" ").append(answer).append("\n");
+			minDist = Integer.MAX_VALUE;
+			subset(0, 0);
+
+			answer.append(String.format("#%d %d\n", test_case, minDist));
 		}
 
-		System.out.println(sb);
+		System.out.println(answer);
+		sc.close();
 	}
 
-	public static void dfs(int idx, int sum) {
-		if(sum >= minSum) {
-			return;
-		}
-		
-		if (idx == N) {
-			if(sum >= B) {
-				minSum = sum;
+	public static void subset(int cnt, int sum) {
+		if (cnt == N) {
+			if (sum >= B) {
+				minDist = Math.min(minDist, sum - B);
 			}
 			return;
 		}
 
-		// 현재 점원으로 탑을 쌓는다.
-		dfs(idx + 1, sum + heights[idx]);
-		
-		// 현재 점원으로 탑을 쌓지 않는다.
-		dfs(idx + 1, sum);
+		subset(cnt + 1, sum + heights[cnt]); // 현재 점원 선택
+		subset(cnt + 1, sum); // 현재 점원 미선택
 	}
 
 }
