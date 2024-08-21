@@ -34,12 +34,14 @@ public class Solution {
 	}
 
 	public static void subset(int cnt, int sum) {
-		if (cnt == N) {
-			if (sum >= B) {
-				minDist = Math.min(minDist, sum - B);
-			}
+		if (sum >= B) {
+			minDist = Math.min(minDist, sum - B);
 			return;
 		}
+        
+        if (cnt == N) {
+            return;
+        }
 
 		subset(cnt + 1, sum + heights[cnt]); // 현재 점원 선택
 		subset(cnt + 1, sum); // 현재 점원 미선택
