@@ -1,148 +1,132 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.Arrays;
-import java.util.StringTokenizer;
+import java.util.Scanner;
 
+// 보호 필름
 public class Solution {
 
-    static int D, W, K;
-    static int[][] cases; // 보호 필름의 단면 정보
-    static int[][] copy; // 보호 필름의 단면 정보 복구용
+	static final int A = 0, B = 1;
 
-    static final int A = 0;
-    static final int B = 1;
+	static int D; // 두께 = 행
+	static int W; // 가로크기 = 열
+	static int K; // 합격기준
+	static int[][] cases;
+	static int[][] tmp;
 
-    static boolean[] isSelected; // 약물을 투여할 보호 필름 정보
-    static int minCnt; // 최소 약물 투여 횟수
+	static boolean[] isSelected; // 약물을 넣었는지 체크
 
-    public static void main(String[] args) throws NumberFormatException, IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st;
-        StringBuffer answer = new StringBuffer();
+	static int minCnt;
 
-        int T = Integer.parseInt(br.readLine());
-        for (int t = 1; t <= T; t++) {
-            st = new StringTokenizer(br.readLine());
-            D = Integer.parseInt(st.nextToken()); // 보호 필름의 두께 = 행
-            W = Integer.parseInt(st.nextToken()); // 가로 크기 = 열
-            K = Integer.parseInt(st.nextToken()); // 합격 기준
+	public static void main(String[] args) {
+		Scanner sc = new Scanner(System.in);
+		int T = sc.nextInt();
 
-            cases = new int[D][W]; // 보호 필름 단면 정보
-            copy = new int[D][W]; // 보호 필름 단면 정보 복구용
-            for (int i = 0; i < D; i++) {
-                st = new StringTokenizer(br.readLine());
-                for (int j = 0; j < W; j++) {
-                    cases[i][j] = Integer.parseInt(st.nextToken());
-                    copy[i][j] = cases[i][j];
-                }
-            }
+		StringBuffer answer = new StringBuffer();
+		for (int test_case = 1; test_case <= T; test_case++) {
+			D = sc.nextInt();
+			W = sc.nextInt();
+			K = sc.nextInt();
+			cases = new int[D][W];
+			tmp = new int[D][W];
 
-            isSelected = new boolean[D]; // 약물을 투여할 보호 필름 정보
-            minCnt = Integer.MAX_VALUE; // 최소 약물 투여 횟수
-            combination(0);
+			for (int i = 0; i < D; i++) {
+				for (int j = 0; j < W; j++) {
+					cases[i][j] = tmp[i][j] = sc.nextInt();
+				}
+			}
 
-            answer.append(String.format("#%d %d\n", t, minCnt));
-        }
+			// 약품 투입 후보를 선정한다.
+			isSelected = new boolean[D];
+			minCnt = Integer.MAX_VALUE;
+			subset(0);
 
-        System.out.println(answer);
-    }
+			answer.append(String.format("#%d %d\n", test_case, minCnt));
+		}
 
-    /*
-     * 약물을 투여할 보호 필름의 모든 부분 집합을 구한다.
-     */
-    public static void combination(int cnt) {
-        if (cnt == D) { // 모든 보호 필름에 약물을 넣을 것인지, 넣지 않을 것인지 선택이 완료되었다.
-            dfs(0, 0);
-            copyCases();
-            return;
-        }
+		System.out.println(answer);
 
-        isSelected[cnt] = true; // 현재 보호 필름에 약물을 넣는 경우
-        combination(cnt + 1);
-        isSelected[cnt] = false; // 현재 보호 필름에 약물을 넣지 않는 경우
-        combination(cnt + 1);
-    }
+		sc.close();
 
-    /*
-     * 약물을 투여할 보호 필름에 약물 A와 약물 B를 투여해본다.
-     */
-    public static void dfs(int cnt, int index) {
-        // 최소 약물 투여 횟수보다 크거나 같다면, 이후는 굳이 확인할 필요가 없다.
-        if (cnt >= minCnt) {
-            return;
-        }
+	}
 
-        if (index == D) {
-            // 합격 기준을 넘는지 확인한다.
-            if (isPassed()) {
-                minCnt = cnt;
-            }
+	public static void subset(int cnt) {
+		if (cnt == D) {
+			inject(0, 0);
+			reset();
+			return;
+		}
 
-            // 합격 기준을 넘는다면, 최소 약물 투여 횟수를 업데이트한다.
-            return;
-        }
+		// 약물 투입 후보 선정
+		isSelected[cnt] = true;
+		subset(cnt + 1);
+		// 약물 투입 후보 탈락
+		isSelected[cnt] = false;
+		subset(cnt + 1);
 
-        // 현재 보호 필름에 약물을 넣어야 하는 경우
-        if (isSelected[index]) {
-            // A 투여
-            Arrays.fill(cases[index], A);
-            dfs(cnt + 1, index + 1);
+	}
 
-            // B 투여
-            Arrays.fill(cases[index], B);
-            dfs(cnt + 1, index + 1);
+	public static void inject(int cnt, int index) {
+		if (cnt >= minCnt) {
+			return;
+		}
 
-        }
-        // 현재 보호 필름에 약물을 넣지 말아야 하는 경우
-        else {
-            dfs(cnt, index + 1);
-        }
-    }
+		if (index == D) {
+			if (isPass()) {
+				minCnt = cnt;
+			}
+			return;
+		}
 
-    /*
-     * 합격 기준을 통과하는 지 확인한다.
-     */
-    public static boolean isPassed() {
-        for (int i = 0; i < W; i++) {
-            int s = 0, e = 1;
-            int len = 1;
+		if (isSelected[index]) {
+			// A 주입
+			Arrays.fill(tmp[index], A);
+			inject(cnt + 1, index + 1);
+			// B 주입
+			Arrays.fill(tmp[index], B);
+			inject(cnt + 1, index + 1);
+		} else {
+			inject(cnt, index + 1);
+		}
 
-            while (e < D) {
-                // 같은 종류의 필름이라면, 길이를 증가시킨다.
-                if (cases[s][i] == cases[e][i]) {
-                    e++;
-                }
-                // 다른 종류의 필름이라면, 해당 위치부터 다시 길이를 잰다.
-                else {
-                    s = e;
-                    e++;
-                }
+	}
 
-                // 길이 업데이트
-                len = Math.max(e - s, len);
+	public static boolean isPass() {
+		// 합격 기준 확인
+		for (int j = 0; j < W; j++) {
+			int s = 0, e = 1;
+			int len = 1;
 
-                // 길이가 합격 기준을 넘어가면, 더이상 확인할 필요가 없다.
-                if (len >= K) {
-                    break;
-                }
-            }
+			while (e < D) {
+				// 다른 특성이 나왔다면, 길이 카운팅 초기화
+				if (tmp[s][j] != tmp[e][j]) {
+					s = e;
+					e++;
+				}
+				// 같은 특성이 나왔다면, 길이 증가
+				else {
+					e++;
+				}
 
-            // 길이가 합격 기준을 넘어가지 않는다.
-            if (len < K) {
-                return false;
-            }
-        }
+				len = Math.max(e - s, len);
 
-        // 길이가 합격 기준을 넘어간다.
-        return true;
-    }
+				if (len >= K) { // 합격 기준 넘겼다면, 더 이상 확인할 필요없다. 반복문 탈출
+					break;
+				}
+			}
 
-    public static void copyCases() {
-        for (int i = 0; i < D; i++) {
-            for (int j = 0; j < W; j++) {
-                cases[i][j] = copy[i][j];
-            }
-        }
-    }
+			if (len < K) { // 반복문을 탈출한 시점에 합격 기준을 넘지 못했다면, 함격 기준 통과 실패
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	public static void reset() {
+		for (int i = 0; i < D; i++) {
+			for (int j = 0; j < W; j++) {
+				tmp[i][j] = cases[i][j];
+			}
+		}
+	}
+
 }
