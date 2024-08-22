@@ -22,7 +22,8 @@ public class Solution {
 				plans[i] = sc.nextInt();
 			}
 
-			minCost = Integer.MAX_VALUE;
+//			minCost = Integer.MAX_VALUE;
+			minCost = prices[3]; // 1년 이용권
 			dfs(0, 0);
 
 			answer.append(String.format("#%d %d\n", test_case, minCost));
@@ -41,6 +42,11 @@ public class Solution {
 
 		if (month == 12) {
 			minCost = cost;
+			return;
+		}
+
+		if (plans[month] == 0) { // 이용계획이 0일이면 그대로 넘긴다.
+			dfs(month + 1, cost);
 			return;
 		}
 
