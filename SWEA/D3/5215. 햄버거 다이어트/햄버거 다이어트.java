@@ -1,52 +1,53 @@
 import java.util.Scanner;
 
-// 햄버거 다이어트
+// 햄버거 다이어트 - 백트래킹
 public class Solution {
 
-	static int N, L;
-	static int[] calories;
-	static int[] scores;
+    static int N, L, scores[], calories[];
+    static int maxScore;
 
-	public static void main(String[] args) {
-		Scanner sc = new Scanner(System.in);
-		int T = sc.nextInt();
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int T = sc.nextInt();
 
-		StringBuffer answer = new StringBuffer();
-		for (int test_case = 1; test_case <= T; test_case++) {
-			N = sc.nextInt(); // 재료의 수
-			L = sc.nextInt(); // 제한 칼로리
+        StringBuffer answer = new StringBuffer();
+        for (int test_case = 1; test_case <= T; test_case++) {
+            N = sc.nextInt();
+            L = sc.nextInt();
+            scores = new int[N];
+            calories = new int[N];
 
-			calories = new int[N];
-			scores = new int[N];
-			for (int i = 0; i < N; i++) {
-				scores[i] = sc.nextInt();
-				calories[i] = sc.nextInt();
-			}
-			
-			int maxScore = solution();
-			answer.append(String.format("#%d %d\n", test_case, maxScore));
-		}
+            for (int i = 0; i < N; i++) {
+                scores[i] = sc.nextInt();
+                calories[i] = sc.nextInt();
+            }
 
-		System.out.println(answer);
+            maxScore = 0;
+            dfs(0, 0, 0);
 
-		sc.close();
+            answer.append(String.format("#%d %d\n", test_case, maxScore));
+        }
 
-	}
+        System.out.println(answer);
 
-	public static int solution() {
-		// dp[i] : i 칼로리까지의 최대 햄버거 점수
-		int[] dp = new int[L + 1];
+        sc.close();
+    }
 
-		// i번째 재료까지 선택했을 때
-		for (int i = 0; i < N; i++) {
-			// j 칼로리까지의 최대 햄버거 점수를 계산한다.
-			for (int j = L; j - calories[i] >= 0; j--) {
-				// i번째 재료를 선택하는 경우, i번쨰 재료를 선택하지 않는 경우 중에 더 큰 점수를 선택한다.
-				dp[j] = Math.max(dp[j - calories[i]] + scores[i], dp[j]);
-			}
-		}
+    public static void dfs(int idx, int score, int calory) {
+        // 제한칼로리가 넘어간 경우, 탐색 종료
+        if (calory > L) {
+            return;
+        }
 
-		return dp[L];
-	}
+        // 재료 선택이 완료된 경우, 최대 점수 업데이트
+        if (idx == N) {
+            if (maxScore < score) {
+                maxScore = score;
+            }
+            return;
+        }
 
+        dfs(idx + 1, score + scores[idx], calory + calories[idx]); // 현재 재료 선택
+        dfs(idx + 1, score, calory); // 현재 재료 미선택
+    }
 }
