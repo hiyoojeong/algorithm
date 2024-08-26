@@ -3,20 +3,6 @@ import java.util.Scanner;
 // 가스관
 public class Main {
 
-    static class Pos {
-
-        int x, y;
-
-        public Pos(int x, int y) {
-            super();
-            this.x = x;
-            this.y = y;
-        }
-    }
-
-    static int[] dx = {-1, 1, 0, 0};
-    static int[] dy = {0, 0, -1, 1};
-
     static int R, C;
     static char[][] map;
 
@@ -41,8 +27,11 @@ public class Main {
                 if (map[i][j] == '.') {
                     // 블록 '+' 확인
                     if (up(i, j) && down(i, j) && left(i, j) && right(i, j)) {
-                        if ((map[i - 1][j] != 'M' && map[i + 1][j] != 'Z') && (map[i - 1][j] != 'Z' && map[i + 1][j] != 'M') &&
-                            (map[i][j - 1] != 'M' && map[i][j + 1] != 'Z') && (map[i][j - 1] != 'Z' && map[i][j + 1] != 'M')) {
+                        // 4 방향에 파이프가 존재하는데, 좌우나 상하로 출발지-도착지가 바로 연결된다면 + 파이프가 올 수 없다.
+                        if ((map[i - 1][j] != 'M' && map[i + 1][j] != 'Z') && (map[i - 1][j] != 'Z'
+                            && map[i + 1][j] != 'M') &&
+                            (map[i][j - 1] != 'M' && map[i][j + 1] != 'Z') && (map[i][j - 1] != 'Z'
+                            && map[i][j + 1] != 'M')) {
                             System.out.println(i + " " + j + " " + "+");
                             return;
                         }
