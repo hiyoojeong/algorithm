@@ -1,3 +1,4 @@
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -8,7 +9,7 @@ import java.util.Set;
 import java.util.StringTokenizer;
 
 // 숨바꼭질
-public class Main {
+class Main {
 
 	static class Pos {
 		int pos, cnt;
@@ -25,43 +26,43 @@ public class Main {
 		StringTokenizer st;
 
 		st = new StringTokenizer(br.readLine());
-		int N = Integer.parseInt(st.nextToken());
-		int K = Integer.parseInt(st.nextToken());
+		int N = Integer.parseInt(st.nextToken()); // 시작 위치
+		int K = Integer.parseInt(st.nextToken()); // 도착 위치
 
-		System.out.println(dfs(N, K));
-	}
+		Queue<Pos> q = new LinkedList<>();
+		boolean[] visited = new boolean[100_001];
 
-	public static int dfs(int start, int end) {
-		Queue<Pos> queue = new LinkedList<>();
-		queue.add(new Pos(start, 0));
+		q.add(new Pos(N, 0));
+		visited[N] = true;
 
-		Set<Integer> visited = new HashSet<>();
-		visited.add(start);
+		int answer = 0;
+		while (!q.isEmpty()) {
+			Pos now = q.poll();
 
-		while (!queue.isEmpty()) {
-			Pos now = queue.poll();
-
-			if (now.pos == end) {
-				return now.cnt;
+			if (now.pos == K) {
+				answer = now.cnt;
+				break;
 			}
 
-			for (int i = 0; i < 3; i++) {
-				int next = 0;
-				if (i == 0)
-					next = now.pos - 1;
-				if (i == 1)
-					next = now.pos + 1;
-				if (i == 2)
-					next = now.pos * 2;
+			int npos = now.pos + 1;
+			if (npos <= 100_000 && !visited[npos]) {
+				q.add(new Pos(npos, now.cnt + 1));
+				visited[npos] = true;
+			}
 
-				if (next >= 0 && next <= 100000 && !visited.contains(next)) {
-					queue.add(new Pos(next, now.cnt + 1));
-					visited.add(next);
-				}
+			npos = now.pos - 1;
+			if (npos >= 0 && !visited[npos]) {
+				q.add(new Pos(npos, now.cnt + 1));
+				visited[npos] = true;
+			}
+
+			npos = now.pos << 1;
+			if (npos <= 100_000 && !visited[npos]) {
+				q.add(new Pos(npos, now.cnt + 1));
+				visited[npos] = true;
 			}
 		}
 
-		return 0;
+		System.out.println(answer);
 	}
-
 }
