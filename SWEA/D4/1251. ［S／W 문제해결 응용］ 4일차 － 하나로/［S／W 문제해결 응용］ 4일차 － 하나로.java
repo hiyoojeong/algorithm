@@ -46,9 +46,9 @@ public class Solution {
 			}
 			for (int i = 0; i < N - 1; i++) {
 				for (int j = i + 1; j < N; j++) {
-//					double L = Math.sqrt(Math.pow(x[i] - x[j], 2) + Math.pow(y[i] - y[j], 2));
-//					L = E * L * L;
-					double L = Math.pow(x[i] - x[j], 2) + Math.pow(y[i] - y[j], 2);
+//					double L = Math.pow(x[i] - x[j], 2) + Math.pow(y[i] - y[j], 2);
+					double L = Math.sqrt(Math.pow(x[i] - x[j], 2) + Math.pow(y[i] - y[j], 2));
+                    L = E * L * L;
 					edges[i].add(new Edge(j, L));
 					edges[j].add(new Edge(i, L));
 				}
@@ -94,12 +94,13 @@ public class Solution {
 
 			}
 
-			long result = Math.round(minWeight * E);
-//			answer.append("#" + test_case + " " + (long) Math.floor(minWeight * 10) / 10 + "\n");
-			
+//			long result = Math.round(minWeight * E);
+			long result = Math.round((minWeight * 10) / 10);
+
 			System.out.printf("#%d %d\n", test_case, result);
 		}
 
 		sc.close();
 	}
+
 }
