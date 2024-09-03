@@ -1,75 +1,62 @@
+import java.util.Scanner;
 
 // 창용 마을 무리의 개수
-import java.util.HashSet;
-import java.util.Scanner;
-import java.util.Set;
-
 public class Solution {
 
-	static int N, M;
-	static int[] parents;
+    static int N, M;
+    static int[] parents;
 
-	public static void main(String[] args) {
-		Scanner sc = new Scanner(System.in);
-		StringBuffer answer = new StringBuffer();
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int T = sc.nextInt();
 
-		int T = sc.nextInt();
-		for (int test_case = 1; test_case <= T; test_case++) {
-			// 입력
-			N = sc.nextInt();
-			M = sc.nextInt();
+        StringBuffer answer = new StringBuffer();
+        for (int test_case = 1; test_case <= T; test_case++) {
+            N = sc.nextInt(); // 창용 마을에 사는 사람의 수
+            M = sc.nextInt(); // 관계 수
 
-			make(); // 집합 생성
+            // 집합 초기화
+            parents = new int[N + 1];
+            for (int i = 1; i <= N; i++) {
+                parents[i] = i;
+            }
 
-			for (int i = 0; i < M; i++) { // 집합 합치기
-				int a = sc.nextInt();
-				int b = sc.nextInt();
+            // 관계별로 집합 합치기
+            for (int i = 0; i < M; i++) {
+                union(sc.nextInt(), sc.nextInt());
+            }
 
-				union(a, b);
-			}
+            // 집합 개수세기
+            int cnt = 0;
+            for (int i = 1; i <= N; i++) {
+                if (parents[i] == i) { // 대표자 수만 세면 된다.
+                    cnt++;
+                }
+            }
 
-			Set<Integer> group = new HashSet<>(); // 집합 개수 카운트
-			for (int i = 1; i <= N; i++) {
-				group.add(find(i));
-			}
+            answer.append(String.format("#%d %d\n", test_case, cnt));
+        }
 
-			answer.append("#" + test_case + " " + group.size() + "\n");
-		}
+        System.out.println(answer);
 
-		System.out.println(answer);
-		sc.close();
+        sc.close();
+    }
 
-	}
+    public static int find(int v) {
+        if (parents[v] == v) {
+            return v;
+        }
+        return parents[v] = find(parents[v]);
+    }
 
-	public static void make() {
-		parents = new int[N + 1];
-		for (int i = 1; i < N + 1; i++) {
-			parents[i] = i;
-		}
-	}
+    public static void union(int a, int b) {
+        int pa = find(a);
+        int pb = find(b);
 
-	public static int find(int v) {
-		if (v == parents[v]) {
-			return v;
-		}
+        if (pa == pb) {
+            return;
+        }
 
-		return parents[v] = find(parents[v]);
-	}
-
-	public static boolean union(int a, int b) {
-		int aRoot = find(a);
-		int bRoot = find(b);
-
-		if (aRoot == bRoot) {
-			return false;
-		}
-
-		if (aRoot > bRoot) {
-			parents[aRoot] = bRoot;
-		} else {
-			parents[bRoot] = aRoot;
-		}
-		return true;
-	}
-
+        parents[pa] = pb;
+    }
 }
