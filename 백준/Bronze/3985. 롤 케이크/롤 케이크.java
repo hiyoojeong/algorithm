@@ -4,48 +4,44 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
-// 3985. 롤 케이크
+// 롤 케이크
 public class Main {
 
 	public static void main(String[] args) throws NumberFormatException, IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		StringTokenizer st;
 
-		int L = Integer.parseInt(br.readLine()); // 롤 케이크의 길이
-		int N = Integer.parseInt(br.readLine()); // 방청객의 번호
+		int L = Integer.parseInt(br.readLine());
+		int N = Integer.parseInt(br.readLine());
 
-		int[] cake = new int[L + 1];
-		int expectedMax = 0, expectedMaxNo = 0;
-		int max = 0, maxNo = 0;
-
+		boolean[] cake = new boolean[L + 1];
+		int expectedNum = 0, expectedCnt = 0;
+		int num = 0, cnt = 0;
 		for (int i = 1; i <= N; i++) {
 			st = new StringTokenizer(br.readLine());
-			int P = Integer.parseInt(st.nextToken()); // 시작 조각
-			int K = Integer.parseInt(st.nextToken()); // 끝 조각
-			int len = K - P + 1;
+			int s = Integer.parseInt(st.nextToken());
+			int e = Integer.parseInt(st.nextToken());
 
-			if (expectedMax < len) { // 가장 많은 조각을 받을 것으로 기대하고 있던 방청객의 번호 업데이트
-				expectedMax = len;
-				expectedMaxNo = i;
-			}
-
-			int cnt = 0; // 못먹은 조각
-			for (int j = P; j <= K; j++) {
-				if (cake[j] != 0) {
-					cnt++;
-					continue;
+			int ec = e - s + 1, c = 0;
+			for (int j = s; j <= e; j++) {
+				if (!cake[j]) {
+					c++;
+					cake[j] = true;
 				}
-				cake[j] = i;
 			}
 
-			if (max < len - cnt) { // 실제로 가장 많은 조각을 받은 방청객의 번호 업데이트
-				max = len - cnt;
-				maxNo = i;
+			if (expectedCnt < ec) { // 가장 많은 조각을 받을 것으로 기대하고 있던 방청객 번호 업데이트
+				expectedCnt = ec;
+				expectedNum = i;
+			}
+			if (cnt < c) { // 실제로 가장 많은 조각을 받은 방청객의 번호 업데이트
+				cnt = c;
+				num = i;
 			}
 		}
 
-		System.out.println(expectedMaxNo);
-		System.out.println(maxNo);
+		System.out.println(expectedNum);
+		System.out.println(num);
 	}
 
 }
