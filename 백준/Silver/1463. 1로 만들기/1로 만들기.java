@@ -1,65 +1,57 @@
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayDeque;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Set;
-import java.util.StringTokenizer;
 
+// 1로 만들기
 public class Main {
 
-    static class Num {
+	static class Num {
+		int n, cnt;
 
-        int number, cnt;
+		public Num(int n, int cnt) {
+			this.n = n;
+			this.cnt = cnt;
+		}
+	}
 
-        public Num(int number, int cnt) {
-            this.number = number;
-            this.cnt = cnt;
-        }
-    }
+	public static void main(String[] args) throws NumberFormatException, IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		int N = Integer.parseInt(br.readLine());
 
-    public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st;
-        StringBuilder answer = new StringBuilder();
+		Queue<Num> queue = new ArrayDeque<>();
+		Set<Integer> visited = new HashSet<>();
 
-        int X = Integer.parseInt(br.readLine());
+		queue.add(new Num(N, 0));
+		visited.add(N);
 
-        Queue<Num> queue = new LinkedList<>();
-        queue.add(new Num(X, 0));
+		while (!queue.isEmpty()) {
+			Num num = queue.poll();
 
-        Set<Integer> set = new HashSet<>();
-        set.add(X);
+			if (num.n == 1) {
+				System.out.println(num.cnt);
+				break;
+			}
 
-        int cnt = 0;
-        while (!queue.isEmpty()) {
-            Num num = queue.poll();
-
-            if (num.number == 1) {
-                cnt = num.cnt;
-                break;
-            }
-
-            // X가 3으로 나누어 떨어지면, 3으로 나눈다.
-            int next = num.number / 3;
-            if (num.number % 3 == 0 && !set.contains(next)) {
-                queue.add(new Num(next, num.cnt + 1));
-                set.add(next);
-            }
-            // X가 2로 나누어 떨어지면, 2로 나눈다.
-            next = num.number / 2;
-            if (num.number % 2 == 0 && !set.contains(next)) {
-                queue.add(new Num(next, num.cnt + 1));
-                set.add(next);
-            }
-            // 1을 뺀다.
-            next = num.number - 1;
-            queue.add(new Num(next, num.cnt + 1));
-            set.add(next);
-
-        }
-
-        System.out.println(cnt);
-    }
+			// 3으로 나누기
+			if (num.n % 3 == 0 && !visited.contains(num.n / 3)) {
+				queue.add(new Num(num.n / 3, num.cnt + 1));
+				visited.add(num.n / 3);
+			}
+			// 2로 나누기
+			if (num.n % 2 == 0 && !visited.contains(num.n / 2)) {
+				queue.add(new Num(num.n / 2, num.cnt + 1));
+				visited.add(num.n / 2);
+			}
+			// 1 빼기
+			if (!visited.contains(num.n - 1)) {
+				queue.add(new Num(num.n - 1, num.cnt + 1));
+				visited.add(num.n - 1);
+			}
+		}
+	}
 }
