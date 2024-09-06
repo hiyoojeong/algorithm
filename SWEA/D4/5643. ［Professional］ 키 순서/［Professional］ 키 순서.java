@@ -3,7 +3,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
-// 코드 재사용성 측면 리팩토링 버전
+// 최적화 측면 리팩토링 버전
 public class Solution {
 
 	static int N, adjMatrix[][], radjMatrix[][], cnt;
