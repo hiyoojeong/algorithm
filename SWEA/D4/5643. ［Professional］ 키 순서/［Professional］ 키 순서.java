@@ -1,76 +1,88 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
-import java.util.Scanner;
-
-// 키 순서
+// 중복된 탐색을 하지 않도록 최적화
 public class Solution {
 
-	static int N, M;
+	static int N, adjMatrix[][], radjMatrix[][], cnt;
 
-	public static void main(String[] args) {
-		Scanner sc = new Scanner(System.in);
+	public static void main(String[] args) throws NumberFormatException, IOException {
+		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 		StringBuffer answer = new StringBuffer();
+		int TC = Integer.parseInt(in.readLine());
+		for (int tc = 1; tc <= TC; tc++) {
+			N = Integer.parseInt(in.readLine());
+			int M = Integer.parseInt(in.readLine());
 
-		int T = sc.nextInt();
-		for (int test_case = 1; test_case <= T; test_case++) {
-			N = sc.nextInt(); // 학생 수
-			M = sc.nextInt(); // 두 학생의 키를 비교한 횟수
-
-			List<Integer>[] in = new ArrayList[N + 1];
-			List<Integer>[] out = new ArrayList[N + 1];
-			for (int i = 1; i <= N; i++) {
-				in[i] = new ArrayList<>();
-				out[i] = new ArrayList<>();
-			}
-
+			adjMatrix = new int[N + 1][N + 1]; // 학생번호 1번부터 시작
+			StringTokenizer st = null;
 			for (int i = 0; i < M; i++) {
-				int from = sc.nextInt();
-				int to = sc.nextInt();
-				in[to].add(from); // 직전 정점
-				out[from].add(to); // 직후 정점
+				st = new StringTokenizer(in.readLine());
+				int a = Integer.parseInt(st.nextToken());
+				int b = Integer.parseInt(st.nextToken());
+				adjMatrix[a][b] = 1;
 			}
 
-			int cnt = 0;
 			for (int i = 1; i <= N; i++) {
-				int front = count(i, in); // 앞에 서있는 학생 수
-				int rear = count(i, out); // 뒤에 서있는 학생 수
-				if (front + rear == N - 1) {
-					cnt++;
-				}
+				adjMatrix[i][0] = -1; // 탐색되지 않은 학생을 나타냄(후에 탐색이 완료되면 자신보다 큰 학생 수 저장)
 			}
 
-			answer.append(String.format("#%d %d\n", test_case, cnt));
-		}
-
-		System.out.println(answer);
-		sc.close();
-	}
-
-	public static int count(int start, List<Integer>[] graph) {
-		Queue<Integer> queue = new LinkedList<>();
-		queue.add(start);
-
-		boolean[] visited = new boolean[N + 1];
-		visited[start] = true;
-
-		int cnt = -1;
-		while (!queue.isEmpty()) {
-			int v = queue.poll();
-			cnt++;
-
-			for (int u : graph[v]) {
-				if (visited[u]) {
+			// 각 학생마다 자신보다 큰, 자신보다 작은 학생 각각 탐색
+			for (int i = 1; i <= N; i++) {
+				if (adjMatrix[i][0] != -1) { // 자신이 탐색되어 있는 상태면 넘김
 					continue;
 				}
-				queue.add(u);
-				visited[u] = true;
+				gtDFS(i);
+			}
+
+			for (int i = 1; i <= N; i++) {
+				for (int j = 1; j <= N; j++) {
+					adjMatrix[0][j] += adjMatrix[i][j];
+				}
+			}
+
+			int ans = 0; // 자신의 키를 알 수 있는 학생 수
+			for (int k = 1; k <= N; k++) {
+				if (adjMatrix[k][0] + adjMatrix[0][k] == N - 1) {
+					ans++;
+				}
+			}
+
+			answer.append("#" + tc + " " + ans + "\n");
+		}
+		System.out.println(answer);
+	}
+
+	private static void gtDFS(int cur) { // 자신보다 큰 학생따라 탐색
+		for (int i = 1; i <= N; i++) {
+			if (adjMatrix[cur][i] == 0) { // 자신과 관계없는 학생은 넘김
+				continue;
+			}
+
+			// i는 나보다 크다.
+			// i가 탐색되지 않았다면 탐색한다.
+			if (adjMatrix[i][0] == -1) {
+				gtDFS(i);
+			}
+
+			// 나보다 키가 큰 학생이 탐색을 완료한 상태
+			// i보다 키가 큰 학생이 있다면 그 학생들의 정보를 나에게 반영(간접 관계를 직접관계로 경로 압축)
+			if (adjMatrix[i][0] > 0) { // 나보다 큰 학생이 있을 경우만 업데이트
+				for (int j = 1; j <= N; j++) {
+					if (adjMatrix[i][j] != 0) {
+						adjMatrix[cur][j] = 1;
+					}
+				}
 			}
 		}
 
-		return cnt;
+		// 나보다 키가 큰 학생들의 수를 센다.
+		adjMatrix[cur][0] = 0; // 초기값이 -1이므로 누적하기 위해서 0으로 초기화
+		for (int k = 1; k <= N; k++) {
+			adjMatrix[cur][0] += adjMatrix[cur][k];
+		}
 	}
 
 }
