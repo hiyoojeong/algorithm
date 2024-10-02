@@ -1,60 +1,88 @@
-
-// 멀티탭 스케줄링
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.StringTokenizer;
 
+// 처음에는 정렬을 해서 넣으면 쉽게 구하겠다 싶음 -> 들어오는 순서도 중요하다고 생각함
+// 근데 N과 K가 매우 적어서 100 * 100 * 100 = 100만 이라 4중포문까지도 가능하겠다 싶음
+// 96퍼 틀림 뭐지 -> 
 public class Main {
+    static int[] plug;
+    static int[] num;
+    static int N, K;
 
-	public static void main(String[] args) throws IOException {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		StringTokenizer st;
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-		st = new StringTokenizer(br.readLine());
-		int N = Integer.parseInt(st.nextToken()); // 멀티탭 구멍의 개수
-		int K = Integer.parseInt(st.nextToken()); // 전기 용품의 총 사용횟수
+        StringTokenizer st;
 
-		int[] items = new int[K];
-		int[] afters = new int[K]; // 동일한 전기용품이 다음에 나오는 위치 (Integer.MAX_VALUE이면 안나옴)
-		Map<Integer, Integer> befores = new HashMap<>();
+        st = new StringTokenizer(br.readLine());
 
-		st = new StringTokenizer(br.readLine());
-		for (int i = 0; i < K; i++) {
-			int item = Integer.parseInt(st.nextToken());
-			items[i] = item;
-			afters[i] = Integer.MAX_VALUE;
-			if (befores.containsKey(item)) { // 이전에 나온적 있는 전기용품이라면 현재 순서에서 재등장했음을 표시
-				afters[befores.get(item)] = i;
-			}
-			befores.put(item, i); // 현재 전기용품이 나온적 있음을 표시
-		}
-		
-		Map<Integer, Integer> multitap = new HashMap<>();
-		int remove = 0;
-		for (int i = 0; i < K; i++) {
-			// 뽑는다 = 멀티탭 자리는 꽉 찼고, 현재 꼽아햐 하는 전기용품은 꽂혀있지 않은 경우
-			if (multitap.size() == N && !multitap.containsKey(items[i])) {
-				int targetItem = -1;
-				int targetAfter = -1;
-				for (int item : multitap.keySet()) {
-					int after = multitap.get(item);
-					if (targetAfter < after) { // 가장 나중에 등장하는 전기용품 뽑기
-						targetAfter = after;
-						targetItem = item;
-					}
-				}
-				multitap.remove(targetItem);
-				remove++;
-			}
-			
-			// 꼽는다
-			multitap.put(items[i], afters[i]);
-		}
-		
-		System.out.println(remove);
-	}
+        N = Integer.parseInt(st.nextToken());
+        K = Integer.parseInt(st.nextToken());
 
+        plug = new int[N];
+        num = new int[K];
+
+        st = new StringTokenizer(br.readLine());
+        for (int i = 0; i < K; i++) {
+            num[i] = Integer.parseInt(st.nextToken());
+        }
+
+        int idx = 0;
+        int count = 0;
+
+        for (int i = 0; i < K; i++) {
+            int n = num[i]; // 지금 꽂아야 하는 애
+
+            if (find(n, N)) { // 이미 꽂혀있으면 넘긴다.
+                continue;
+            }
+
+            if (idx < N) { // 꽂을 수 있으면 꽂는다.
+                // plug[count++] = n;
+            	plug[idx++] = n;
+            } 
+            else {
+                
+                int change_plug = 0;
+                int latest_use = 0;
+
+                for (int j = 0; j < N; j++) {
+                    int rembmer_k = 0;
+                    for (int k = i + 1; k < K; k++) {
+                        if (plug[j] == num[k]) {
+                            rembmer_k = k; // 멀티탭에 j번쨰로 꽂혀 있는 게, 앞으로 가장 나중에 나오는 위치를 저장
+                            break;
+                        }
+                    }
+                    // 이후에 사용되지 않을 거 저장
+                    if(rembmer_k == 0) {
+                        change_plug = j;
+                        break;
+                    }
+                    // 가장 늦게 사용되는 거 저장
+                    if (rembmer_k > latest_use) {
+                        latest_use = rembmer_k;
+                        change_plug = j;
+                    }
+                    
+                }
+
+                plug[change_plug] = n;
+                count++;
+            }
+        }
+         // System.out.println(count-N);
+        System.out.println(count);
+    }
+
+    static boolean find(int n, int size) {
+        for (int i = 0; i < size; i++) {
+            if (plug[i] == n) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
