@@ -1,4 +1,3 @@
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -7,89 +6,79 @@ import java.util.Queue;
 import java.util.StringTokenizer;
 
 // 벽 부수고 이동하기
-public class Main {
+class Main {
 
-	static class Pos {
-		int r, c, cnt;
-		boolean isBreak;
+    static class Pos {
 
-		public Pos(int r, int c, int cnt, boolean isBreak) {
-			this.r = r;
-			this.c = c;
-			this.cnt = cnt;
-			this.isBreak = isBreak;
-		}
-	}
+        int r, c, cnt, left;
 
-	static int[] dr = { -1, 1, 0, 0 };
-	static int[] dc = { 0, 0, -1, 1 };
+        public Pos(int r, int c, int cnt, int left) {
+            this.r = r;
+            this.c = c;
+            this.cnt = cnt;
+            this.left = left;
+        }
 
-	static int N, M, map[][];
+    }
 
-	public static void main(String[] args) throws NumberFormatException, IOException {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		StringTokenizer st;
+    static int[] dr = {-1, 1, 0, 0};
+    static int[] dc = {0, 0, -1, 1};
 
-		st = new StringTokenizer(br.readLine());
-		N = Integer.parseInt(st.nextToken());
-		M = Integer.parseInt(st.nextToken());
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st;
+        StringBuilder answer = new StringBuilder();
 
-		map = new int[N][M];
-		for (int i = 0; i < N; i++) {
-			String input = br.readLine();
-			for (int j = 0; j < M; j++) {
-				map[i][j] = input.charAt(j) - '0';
-			}
-		}
+        st = new StringTokenizer(br.readLine());
+        int N = Integer.parseInt(st.nextToken());
+        int M = Integer.parseInt(st.nextToken());
 
-		System.out.println(bfs(0, 0, N - 1, M - 1));
-	}
+        int[][] map = new int[N][M];
+        for (int i = 0; i < N; i++) {
+            String input = br.readLine();
+            for (int j = 0; j < M; j++) {
+                map[i][j] = input.charAt(j) - '0';
+            }
+        }
 
-	public static int bfs(int sr, int sc, int er, int ec) {
-		Queue<Pos> q = new ArrayDeque<>();
-		q.add(new Pos(sr, sc, 1, false));
+        Queue<Pos> q = new ArrayDeque<>();
+        q.add(new Pos(0, 0, 1, 1));
+        boolean[][][] visited = new boolean[2][N][M];
+        visited[1][0][0] = true;
 
-		// visited[N][M][0] : 벽을 부수지 않고 이동한 것
-		// visited[N][M][1] : 벽을 부수고 이동한 것
-		boolean[][][] visited = new boolean[N][M][2];
-		visited[sr][sc][0] = true;
+        while (!q.isEmpty()) {
+            Pos now = q.poll();
+            if (now.r == N - 1 && now.c == M - 1) {
+                System.out.println(now.cnt);
+                return;
+            }
 
-		while (!q.isEmpty()) {
-			Pos now = q.poll();
+            for (int i = 0; i < 4; i++) {
+                int nr = now.r + dr[i];
+                int nc = now.c + dc[i];
+                int ncnt = now.cnt + 1;
 
-			if (now.r == er && now.c == ec) {
-				return now.cnt;
-			}
+                // 범위를 벗어난 경우
+                if (nr < 0 || nc < 0 || nr >= N || nc >= M) {
+                    continue;
+                }
 
-			for (int i = 0; i < 4; i++) {
-				int nr = now.r + dr[i];
-				int nc = now.c + dc[i];
+                int nleft = map[nr][nc] == 1 ? now.left - 1 : now.left;
 
-				if (nr < 0 || nc < 0 || nr >= N || nc >= M) {
-					continue;
-				}
+                // 벽이 있는데 벽을 부술 수 없는 경우
+                if (nleft == -1) {
+                    continue;
+                }
+                // 같은 상황으로 같은 위치에 방문한 적 있는 경우
+                if (visited[nleft][nr][nc]) {
+                    continue;
+                }
 
-				// 다음 이동칸에 벽이 없는 경우
-				if (map[nr][nc] == 0) {
-					// 벽을 부순적 없는 경우에서 방문 체크
-					if (!now.isBreak && !visited[nr][nc][0]) {
-						q.add(new Pos(nr, nc, now.cnt + 1, now.isBreak));
-						visited[nr][nc][0] = true;
-					}
-					// 벽을 부순적 있는 경우에서 방문 체크
-					else if (now.isBreak && !visited[nr][nc][1]) {
-						q.add(new Pos(nr, nc, now.cnt + 1, now.isBreak));
-						visited[nr][nc][1] = true;
-					}
-				}
-				// 다음 이동칸에 벽이 있는데 벽을 부술 수 있는 경우
-				else if (!now.isBreak) {
-					q.add(new Pos(nr, nc, now.cnt + 1, true));
-					visited[nr][nc][1] = true;
-				}
-			}
-		}
+                q.add(new Pos(nr, nc, ncnt, nleft));
+                visited[nleft][nr][nc] = true;
+            }
+        }
 
-		return -1;
-	}
+        System.out.println(-1);
+    }
 }
