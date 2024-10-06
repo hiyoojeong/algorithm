@@ -1,149 +1,144 @@
-
 import java.util.Scanner;
 
-// 1873. 상호의 배틀필드
+// 상호의 배틀필드
 public class Solution {
 
-	static class Pos {
-		int x, y;
+    static class Pos {
 
-		public Pos(int x, int y) {
-			this.x = x;
-			this.y = y;
-		}
+        int r, c, d;
 
-	}
+        public Pos(int r, int c, int d) {
+            this.r = r;
+            this.c = c;
+            this.d = d;
+        }
+    }
 
-	static class Tank {
-		Pos pos, dir;
+    static int H, W;
+    static char[][] map;
+    static Pos tank;
+    static int[] dr = {-1, 1, 0, 0};
+    static int[] dc = {0, 0, -1, 1};
 
-		public Tank(Pos pos, Pos dir) {
-			this.pos = pos;
-			this.dir = dir;
-		}
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int T = sc.nextInt();
 
-		public void setDir(char ch) {
-			if (ch == '^' || ch == 'U') {
-				dir.x = -1;
-				dir.y = 0;
-			} else if (ch == 'v' || ch == 'D') {
-				dir.x = 1;
-				dir.y = 0;
-			} else if (ch == '<' || ch == 'L') {
-				dir.x = 0;
-				dir.y = -1;
-			} else if (ch == '>' || ch == 'R') {
-				dir.x = 0;
-				dir.y = 1;
-			}
-		}
+        StringBuffer answer = new StringBuffer();
+        for (int test_case = 1; test_case <= T; test_case++) {
+            // 입력
+            H = sc.nextInt();
+            W = sc.nextInt();
+            map = new char[H][W];
+            tank = null;
+            for (int i = 0; i < H; i++) {
+                String input = sc.next();
+                for (int j = 0; j < W; j++) {
+                    map[i][j] = input.charAt(j);
+                    if (map[i][j] == '^' || map[i][j] == 'v' || map[i][j] == '<'
+                        || map[i][j] == '>') {
+                        tank = new Pos(i, j, conventToIdx(map[i][j]));
+                        map[i][j] = '.';
+                    }
+                }
+            }
 
-		public void move() {
-			int nx = pos.x + dir.x;
-			int ny = pos.y + dir.y;
+            // 명령어 처리
+            int N = sc.nextInt();
+            String input = sc.next();
+            for (int i = 0; i < N; i++) {
+                char op = input.charAt(i);
+                if (op == 'S') {
+                    shoot();
+                } else {
+                    tank.d = conventToIdx(op); // 방향바꾸기
+                    move();
+                }
+            }
 
-			if ((nx < 0 || ny < 0 || nx >= H || ny >= W) || map[nx][ny] != BLANK) {
-				return;
-			}
+            // 출력
+            answer.append(String.format("#%d ", test_case));
+            for (int i = 0; i < H; i++) {
+                for (int j = 0; j < W; j++) {
+                    if (tank.r == i && tank.c == j) {
+                        answer.append(conventToChar(tank.d));
+                    } else {
+                        answer.append(map[i][j]);
+                    }
+                }
+                answer.append("\n");
+            }
+        }
 
-			// 다음 위치와 현재 위치 변경
-			char tmp = map[pos.x][pos.y];
-			map[pos.x][pos.y] = map[nx][ny];
-			map[nx][ny] = tmp;
+        System.out.println(answer);
 
-			// 전차 위치 업데이트
-			pos.x = nx;
-			pos.y = ny;
-		}
-	}
+        sc.close();
+    }
 
-	static final char BLANK = '.';
-	static final char BRICK = '*';
-	static final char STEEL = '#';
-	static final char WATER = '-';
+    static int conventToIdx(char direct) {
+        if (direct == '^' || direct == 'U') {
+            return 0;
+        } else if (direct == 'v' || direct == 'D') {
+            return 1;
+        } else if (direct == '<' || direct == 'L') {
+            return 2;
+        } else if (direct == '>' || direct == 'R') {
+            return 3;
+        }
+        return -1;
+    }
 
-	static int H, W;
-	static char map[][];
+    static char conventToChar(int direct) {
+        if (direct == 0) {
+            return '^';
+        } else if (direct == 1) {
+            return 'v';
+        } else if (direct == 2) {
+            return '<';
+        } else if (direct == 3) {
+            return '>';
+        }
+        return ' ';
+    }
 
-	public static void main(String[] args) {
-		Scanner sc = new Scanner(System.in);
-		int T = sc.nextInt();
+    static void move() {
+        int nr = tank.r + dr[tank.d];
+        int nc = tank.c + dc[tank.d];
 
-		StringBuffer answer = new StringBuffer();
-		for (int test_case = 1; test_case <= T; test_case++) {
-			H = sc.nextInt(); // 게임 맵의 행
-			W = sc.nextInt(); // 게임 맵의 열
+        // 게임 맵 밖이면 이동 불가능
+        if (nr < 0 || nc < 0 || nr >= H || nc >= W) {
+            return;
+        }
+        // 평지가 아니면 이동 불가능
+        if (map[nr][nc] != '.') {
+            return;
+        }
 
-			map = new char[H][W]; // 게임 맵
-			Tank tank = null; // 탱크
+        tank.r = nr;
+        tank.c = nc;
+    }
 
-			for (int i = 0; i < H; i++) {
-				String input = sc.next();
-				for (int j = 0; j < W; j++) {
-					char ch = input.charAt(j);
-					map[i][j] = ch;
-					if (ch == '^' || ch == 'v' || ch == '<' || ch == '>') {
-						tank = new Tank(new Pos(i, j), new Pos(0, 0));
-						tank.setDir(ch);
-					}
-				}
-			}
+    static void shoot() {
+        int nr = tank.r;
+        int nc = tank.c;
 
-			int N = sc.nextInt(); // 사용자가 넣을 입력의 개수
-			String input = sc.next();
-			for (int i = 0; i < N; i++) {
-				char ch = input.charAt(i);
+        while (true) {
+            nr += dr[tank.d];
+            nc += dc[tank.d];
 
-				// 포탄 발사
-				if (ch == 'S') {
-					int x = tank.pos.x;
-					int y = tank.pos.y;
-
-					while (true) {
-						int nx = x + tank.dir.x;
-						int ny = y + tank.dir.y;
-
-						if ((nx < 0 || ny < 0 || nx >= H || ny >= W) || map[nx][ny] == STEEL) {
-							break;
-						}
-
-						if (map[nx][ny] == BRICK) {
-							map[nx][ny] = BLANK;
-							break;
-						}
-
-						x = nx;
-						y = ny;
-					}
-				}
-				// 전차 이동
-				else {
-					tank.setDir(ch);
-					if (ch == 'U') {
-						map[tank.pos.x][tank.pos.y] = '^';
-					} else if (ch == 'D') {
-						map[tank.pos.x][tank.pos.y] = 'v';
-					} else if (ch == 'L') {
-						map[tank.pos.x][tank.pos.y] = '<';
-					} else if (ch == 'R') {
-						map[tank.pos.x][tank.pos.y] = '>';
-					}
-					tank.move();
-				}
-			}
-
-			answer.append(String.format("#%d ", test_case));
-			for (int i = 0; i < H; i++) {
-				for (int j = 0; j < W; j++) {
-					answer.append(map[i][j]);
-				}
-				answer.append("\n");
-			}
-		}
-
-		System.out.println(answer);
-
-		sc.close();
-	}
-
+            // 게임 맵 밖으로 나간 경우
+            if (nr < 0 || nc < 0 || nr >= H || nc >= W) {
+                break;
+            }
+            // 강철로 만들어진 벽에 충돌한 경우
+            if (map[nr][nc] == '#') {
+                break;
+            }
+            // 벽돌로 만들어진 벽에 충돌한 경우
+            if (map[nr][nc] == '*') {
+                map[nr][nc] = '.'; // 벽이 파괴되어 칸은 평지가 됨
+                break;
+            }
+        }
+    }
 }
