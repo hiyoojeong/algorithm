@@ -1,158 +1,125 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+
+// 줄기세포배양
+import java.util.ArrayDeque;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.Objects;
-import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.Scanner;
 import java.util.Set;
-import java.util.StringTokenizer;
 
-// [SWEA] 5653. 줄기세포배양(역량 보충문제)
-public class Solution {
+class Solution {
+	static class Pos {
+		int r, c, time, originTime;
 
-    static class Cell {
+		public Pos(int r, int c, int time) {
+			this.r = r;
+			this.c = c;
+			this.time = time;
+			this.originTime = time;
+		}
 
-        int r, c, time, ready, active;
+		private void resetTime() {
+			time = originTime;
+		}
 
-        public Cell(int r, int c, int time, int ready, int active) {
-            this.r = r;
-            this.c = c;
-            this.time = time;
-            this.ready = ready;
-            this.active = active;
-        }
+		@Override
+		public boolean equals(Object obj) {
+			Pos pos = (Pos) obj;
+			return this.r == pos.r && this.c == pos.c;
+		}
 
-        @Override
-        public boolean equals(Object obj) {
-            Cell c = (Cell) obj;
-            return this.r == c.r && this.c == c.c;
-        }
+		@Override
+		public int hashCode() {
+			return Objects.hash(r, c);
+		}
+	}
 
-        @Override
-        public int hashCode() {
-            return Objects.hash(this.r, this.c);
-        }
+	static int[] dr = { -1, 1, 0, 0 };
+	static int[] dc = { 0, 0, -1, 1 };
 
-        @Override
-        public String toString() {
-            return "Cell{" +
-                "r=" + r +
-                ", c=" + c +
-                ", time=" + time +
-                ", ready=" + ready +
-                ", active=" + active +
-                '}';
-        }
-    }
+	static Set<Pos> cell;
+	static Queue<Pos> nonActive, active;
 
-    static int N, M, K;
-    static int[][] map;
+	public static void main(String args[]) throws Exception {
+		Scanner sc = new Scanner(System.in);
+		StringBuffer answer = new StringBuffer();
+		int T = sc.nextInt();
+		for (int test_case = 1; test_case <= T; test_case++) {
+			cell = new HashSet<>();
+			nonActive = new ArrayDeque<>();
+			active = new ArrayDeque<>();
 
-    static Queue<Cell> ready; // 비활성세포
-    static Queue<Cell> active; // 활성세포
-    static Set<Cell> isUsed; // 모든 세포 정보
-    static int diedCount; // 죽은세포 개수
+			int N = sc.nextInt(); // 초기 상태에서 줄기세포가 분포된 세로크기
+			int M = sc.nextInt(); // 가로크기
+			int K = sc.nextInt(); // 배양시간
 
-    static int[] dr = {-1, 1, 0, 0};
-    static int[] dc = {0, 0, -1, 1};
+			for (int i = 0; i < N; i++) {
+				for (int j = 0; j < M; j++) {
+					int time = sc.nextInt();
+					if (time == 0) {
+						continue;
+					}
+					cell.add(new Pos(i, j, time));
+					nonActive.add(new Pos(i, j, time));
+				}
+			}
 
-    public static void main(String[] args) throws NumberFormatException, IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st;
-        StringBuffer answer = new StringBuffer();
+			for (int time = 1; time <= K; time++) {
+				// 활성 상태
+				int size = active.size();
+				Queue<Pos> nexts = new ArrayDeque<>();
+				for (int i = 0; i < size; i++) {
+					// 생명력 수치가 1 감소한다.
+					Pos now = active.poll();
+					now.time--;
 
-        int T = Integer.parseInt(br.readLine());
-        for (int t = 1; t <= T; t++) {
-            // 입력
-            st = new StringTokenizer(br.readLine());
-            N = Integer.parseInt(st.nextToken()); // 세로
-            M = Integer.parseInt(st.nextToken()); // 가로
-            K = Integer.parseInt(st.nextToken()); // 배양 시간
+					// 주변 셀에 번식할 수 있으면 번식한다.
+					for (int j = 0; j < 4; j++) {
+						int nr = now.r + dr[j];
+						int nc = now.c + dc[j];
 
-            ready = new LinkedList<>();
-            active = new PriorityQueue<>(
-                (o1, o2) -> -(o1.time - o2.time)); // 생명력 수치가 높은 줄기 세포순서대로 정렬
-            isUsed = new HashSet<>();
-            diedCount = 0;
-            for (int i = 0; i < N; i++) {
-                st = new StringTokenizer(br.readLine());
-                for (int j = 0; j < M; j++) {
-                    int time = Integer.parseInt(st.nextToken());
-                    if (time > 0) {
-                        Cell cell = new Cell(i, j, time, time, time);
-                        ready.add(cell);
-                        isUsed.add(cell);
-                    }
-                }
-            }
+						Pos next = new Pos(nr, nc, now.originTime);
+						if (!cell.contains(next)) {
+							cell.add(next);
+							nexts.add(next); // 비활성 상태 세포로 바로저장하지 않고 임시저장한다.
+						}
+					}
 
-            // 세포 배양
-            for (int i = 0; i < K; i++) {
-                cellCulture();
-            }
+					// 아직 생명령 수치가 남아있으면 다시 큐에 넣는다.
+					if (now.time > 0) {
+						active.add(now);
+					}
+				}
 
-            // 출력
-            answer.append("#").append(t).append(" ").append(isUsed.size() - diedCount).append("\n");
-        }
+				// 비활성 상태
+				size = nonActive.size();
+				for (int i = 0; i < size; i++) {
+					// 생명력 수지가 1 감소한다.
+					Pos now = nonActive.poll();
+					now.time--;
 
-        System.out.println(answer);
-    }
+					// 생명력 수치가 0이라면 활성 상태가 된다.
+					if (now.time == 0) {
+						now.resetTime();
+						active.add(now);
+					}
+					// 아직 생명력 수치가 남아있으면 다시 큐에 넣는다.
+					else if (now.time > 0) {
+						nonActive.add(now);
+					}
+				}
 
-    public static void cellCulture() {
-        int readySize = ready.size();
-        int activeSize = active.size();
+				// 활성 상태 세포에서 번식된 비활성 상태 세포
+				while (!nexts.isEmpty()) {
+					Pos next = nexts.poll();
+					nonActive.add(next);
+				}
+			}
 
-        // 활성 상태 : 번식
-        // 활성 상태 -> 죽은 상태
-        Queue<Cell> tempActive = new LinkedList<>(); // 번식 후에도 활성 상태인 세포는 잠시 저장해둔다.
-        for (int i = 0; i < activeSize; i++) {
-            Cell cell = active.poll();
-            cell.active--;
-
-            for (int d = 0; d < 4; d++) {
-                int nr = cell.r + dr[d];
-                int nc = cell.c + dc[d];
-                int nt = cell.time;
-
-                Cell nextCell = new Cell(nr, nc, nt, nt, nt);
-
-                if (isUsed.contains(nextCell)) {
-                    continue;
-                }
-
-                isUsed.add(nextCell);
-                ready.add(nextCell);
-            }
-
-            // 활성 상태로 x 시간을 보냈다면, x시간이 지나는 순간 죽은 상태가 된다.
-            if (cell.active == 0) {
-                diedCount++;
-                continue;
-            }
-
-            tempActive.add(cell);
-        }
-
-        // 번식 후에도 활성 상태인 세포를 활성 성태에 다시 저장한다.
-        // 위 과정에서 바로 저장할 경우, PriorityQueue 정렬 방식에 의해 순서가 꼬인다.
-        while (!tempActive.isEmpty()) {
-            active.add(tempActive.poll());
-        }
-
-        // 비활성 상태 -> 활성 상태로 변환
-        for (int i = 0; i < readySize; i++) {
-            Cell cell = ready.poll();
-            cell.ready--;
-
-            // 비활성 상태로 x 시간을 보냈다면, x시간이 지나는 순간 활성 상태가 된다.
-            if (cell.ready == 0) {
-                active.add(cell);
-                continue;
-            }
-
-            ready.add(cell);
-        }
-    }
+			int cnt = nonActive.size() + active.size();
+			answer.append(String.format("#%d %d\n", test_case, cnt));
+		}
+		System.out.println(answer);
+		sc.close();
+	}
 }
