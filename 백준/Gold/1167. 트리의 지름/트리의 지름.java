@@ -32,7 +32,6 @@ public class Main {
 		int N = Integer.parseInt(br.readLine());
 		adj = new ArrayList[N + 1];
 		visited = new boolean[N + 1];
-		int[] in = new int[N + 1];
 		for (int i = 1; i <= N; i++) {
 			adj[i] = new ArrayList<>();
 		}
@@ -47,7 +46,6 @@ public class Main {
 				}
 				int dist = Integer.parseInt(st.nextToken());
 				adj[from].add(new Node(to, dist));
-				in[from]++;
 			}
 		}
 
@@ -59,25 +57,23 @@ public class Main {
 		visited[v] = true;
 
 		int maxChildDist = 0;
-		Queue<Integer> pq = new PriorityQueue<>(Collections.reverseOrder());
+		int first = 0, second = 0;
 		for (Node next : adj[v]) {
 			if (visited[next.v]) {
 				continue;
 			}
 			int dist = dfs(next.v) + next.dist;
 			maxChildDist = Math.max(maxChildDist, dist);
-			pq.add(dist);
+			if (first <= dist) {
+				second = first;
+				first = dist;
+			} else if (second < dist) {
+				second = dist;
+			}
 		}
 
 		// 현재 노드를 루트로 했을 때, 최대 트리의 지름
-		int maxDist = 0;
-		for (int i = 0; i < 2; i++) {
-			if (pq.isEmpty()) {
-				break;
-			}
-			maxDist += pq.poll();
-		}
-		result = Math.max(result, maxDist);
+		result = Math.max(result, first + second);
 
 		return maxChildDist;
 	}
