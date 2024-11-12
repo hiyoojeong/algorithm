@@ -41,11 +41,6 @@ public class Main {
 	}
 
 	private static void dfs(int idx) {
-		// 스도쿠 이미 만들어짐
-		if (answer != null) {
-			return;
-		}
-
 		// 스도쿠 만들어짐
 		if (idx == pos.size()) {
 			answer = new StringBuilder();
