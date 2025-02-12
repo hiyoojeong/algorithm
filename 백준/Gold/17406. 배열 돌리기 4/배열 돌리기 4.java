@@ -1,5 +1,4 @@
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,141 +7,126 @@ import java.util.StringTokenizer;
 // 배열 돌리기 4
 public class Main {
 
-	static class Method {
-		int r, c, s;
+    static class Rotate {
 
-		public Method(int r, int c, int s) {
-			this.r = r;
-			this.c = c;
-			this.s = s;
-		}
-	}
+        int r, c, s;
 
-	static int N, M, K;
-	static int[][] originalMap;
-	static List<Method> methods;
+        public Rotate(int r, int c, int s) {
+            this.r = r;
+            this.c = c;
+            this.s = s;
+        }
+    }
 
-	static int answer = Integer.MAX_VALUE;
+    static int N, M, K, arr[][], copy[][], tmp[][], result = Integer.MAX_VALUE;
+    static List<Rotate> rotates;
 
-	// 우, 하, 좌, 상 순서
-	static int[] dr = { 0, 1, 0, -1 };
-	static int[] dc = { 1, 0, -1, 0 };
+    static int[] dr = {0, 1, 0, -1}; // 우하좌상
+    static int[] dc = {1, 0, -1, 0};
 
-	public static void main(String[] args) throws NumberFormatException, IOException {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		StringTokenizer st;
+    static boolean[] visited;
+    static int[] order;
 
-		st = new StringTokenizer(br.readLine());
-		N = Integer.parseInt(st.nextToken());
-		M = Integer.parseInt(st.nextToken());
-		K = Integer.parseInt(st.nextToken());
+    public static void main(String[] args) throws Exception {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st;
 
-		originalMap = new int[N][M];
-		for (int i = 0; i < N; i++) {
-			st = new StringTokenizer(br.readLine());
-			for (int j = 0; j < M; j++) {
-				originalMap[i][j] = Integer.parseInt(st.nextToken());
-			}
-		}
+        st = new StringTokenizer(br.readLine());
+        N = Integer.parseInt(st.nextToken());
+        M = Integer.parseInt(st.nextToken());
+        K = Integer.parseInt(st.nextToken());
 
-		methods = new ArrayList<>();
-		for (int i = 0; i < K; i++) {
-			st = new StringTokenizer(br.readLine());
-			int r = Integer.parseInt(st.nextToken()) - 1;
-			int c = Integer.parseInt(st.nextToken()) - 1;
-			int s = Integer.parseInt(st.nextToken());
-			methods.add(new Method(r, c, s));
-		}
+        arr = new int[N + 1][M + 1];
+        tmp = new int[N + 1][M + 1];
+        visited = new boolean[K];
+        order = new int[K];
+        for (int i = 1; i <= N; i++) {
+            st = new StringTokenizer(br.readLine());
+            for (int j = 1; j <= M; j++) {
+                arr[i][j] = Integer.parseInt(st.nextToken());
+            }
+        }
 
-		combination(K, new ArrayList<>());
+        rotates = new ArrayList<>();
+        for (int k = 0; k < K; k++) {
+            st = new StringTokenizer(br.readLine());
+            int r = Integer.parseInt(st.nextToken());
+            int c = Integer.parseInt(st.nextToken());
+            int s = Integer.parseInt(st.nextToken());
+            rotates.add(new Rotate(r, c, s));
+        }
 
-		System.out.println(answer);
-	}
+        dfs(0);
+        System.out.println(result);
+    }
 
-	public static void combination(int n, List<Integer> list) {
-		if (list.size() == n) {
-			int[][] map = copyMap();
+    private static void dfs(int cnt) {
+        if (cnt == K) {
+            copy = getCopyArr(); // 원본배열복사
+            for (int i = 0; i < K; i++) { // 순서대로 회전
+                Rotate now = rotates.get(order[i]);
+                rotate(now.r, now.c, now.s);
+            }
+            result = Math.min(getMinRowSum(), result); // 최소 행 총합
+            return;
+        }
 
-			// 조합된 순서대로 map을 회전한다.
-			for (Integer order : list) {
-				Method method = methods.get(order);
-				rotate(map, method.r, method.c, method.s);
-			}
+        for (int i = 0; i < K; i++) {
+            if (visited[i]) {
+                continue;
+            }
+            visited[i] = true;
+            order[cnt] = i;
+            dfs(cnt + 1);
+            visited[i] = false;
+        }
+    }
 
-			// 각 행에 있는 모든 수의 합 중 최솟값을 계산하여 업데이트한다.
-			int minSum = getMinSumOfRow(map);
-			answer = Math.min(answer, minSum);
-		}
+    private static int[][] getCopyArr() {
+        copy = new int[N + 1][M + 1];
+        for (int i = 1; i <= N; i++) {
+            for (int j = 1; j <= M; j++) {
+                copy[i][j] = arr[i][j];
+            }
+        }
+        return copy;
+    }
 
-		for (int i = 0; i < n; i++) {
-			if (!list.contains(i)) {
-				list.add(i);
-				combination(n, list);
-				list.remove(list.size() - 1);
-			}
-		}
+    private static void rotate(int r, int c, int s) {
+        // 회전 후 정보를 tmp 배열에 저장
+        for (int i = 1; i <= s; i++) {
+            int nr = r - i;
+            int nc = c - i;
+            for (int d = 0; d < 4; d++) {
+                for (int j = 0; j < i * 2; j++) {
+                    tmp[nr + dr[d]][nc + dc[d]] = copy[nr][nc];
+                    nr += dr[d];
+                    nc += dc[d];
+                }
+            }
+        }
 
-	}
+        // tmp배열 -> arr배열
+        for (int i = r - s; i <= r + s; i++) {
+            for (int j = c - s; j <= c + s; j++) {
+                if (i == r && j == c) {
+                    continue;
+                }
+                copy[i][j] = tmp[i][j];
+            }
+        }
+    }
 
-	public static void rotate(int[][] map, int r, int c, int s) {
-		int[][] tmp = new int[N][M];
+    private static int getMinRowSum() {
+        int min = Integer.MAX_VALUE;
+        for (int i = 1; i <= N; i++) {
+            int sum = 0;
+            for (int j = 1; j <= M; j++) {
+                sum += copy[i][j];
+            }
+            min = Math.min(sum, min);
+        }
 
-		// 회전 후 정보를 tmp 배열에 저장한다.
-		for (int i = 1; i <= s; i++) {
-			int nowr = r - i;
-			int nowc = c - i;
-
-			for (int d = 0; d < 4; d++) {
-				for (int j = 0; j < i * 2; j++) {
-					int nextr = nowr + dr[d];
-					int nextc = nowc + dc[d];
-
-					tmp[nextr][nextc] = map[nowr][nowc];
-
-					nowr = nextr;
-					nowc = nextc;
-				}
-			}
-		}
-
-		// tmp 데이터를 map 데이터에 저장한다.
-		for (int i = r - s; i <= r + s; i++) {
-			for (int j = c - s; j <= c + s; j++) {
-				if (i == r && j == c) {
-					continue;
-				}
-				map[i][j] = tmp[i][j];
-			}
-		}
-
-	}
-
-	public static int getMinSumOfRow(int[][] map) {
-		int minSum = Integer.MAX_VALUE, sum;
-
-		for (int i = 0; i < N; i++) {
-			sum = 0;
-
-			for (int j = 0; j < M; j++) {
-				sum += map[i][j];
-			}
-
-			minSum = Math.min(sum, minSum);
-		}
-
-		return minSum;
-	}
-
-	public static int[][] copyMap() {
-		int[][] tmp = new int[N][M];
-
-		for (int i = 0; i < N; i++) {
-			for (int j = 0; j < M; j++) {
-				tmp[i][j] = originalMap[i][j];
-			}
-		}
-
-		return tmp;
-	}
-
+        return min;
+    }
 }
