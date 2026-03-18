@@ -20,7 +20,7 @@ class Solution {
     public int solution(int[][] points, int[][] routes) {
         int answer = 0;
 
-        int[][][] map = new int[19801][101][101];
+        int[][][] map = new int[19800][101][101];
         int m = routes[0].length; // 방문해야하는 지점 개수
 
         Queue<Node> q = new ArrayDeque<>();
