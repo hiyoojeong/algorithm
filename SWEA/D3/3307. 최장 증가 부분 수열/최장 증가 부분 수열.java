@@ -1,6 +1,6 @@
 import java.util.Scanner;
 
-// 0/1 Knapsack - dp
+//  최장 부분 증가 수열 - dp
 class Solution {
     public static void main(String args[]) throws Exception {
         Scanner sc = new Scanner(System.in);
@@ -22,8 +22,8 @@ class Solution {
                 for(int j=0; j<=i-1; j++) {
                     if(arr[j]<arr[i]) {
                         dp[i] = Math.max(dp[i], dp[j]+1);
-                        ans = Math.max(ans, dp[i]);
                     }
+                    ans = Math.max(ans, dp[i]);
                 }
             }
 
