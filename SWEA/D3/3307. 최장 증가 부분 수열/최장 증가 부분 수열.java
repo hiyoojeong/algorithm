@@ -1,6 +1,6 @@
 import java.util.Scanner;
 
-//  최장 부분 증가 수열 - dp
+// 0/1 Knapsack - 이분탐색
 class Solution {
     public static void main(String args[]) throws Exception {
         Scanner sc = new Scanner(System.in);
@@ -10,21 +10,28 @@ class Solution {
         StringBuffer answer = new StringBuffer();
         for (int test_case = 1; test_case <= T; test_case++) {
             int N = sc.nextInt();
-            int[] arr = new int[N];
-            for(int i=0; i<N; i++) {
-                arr[i] = sc.nextInt();
-            }
-
-            int[] dp = new int[N];
+            int[] lis = new int[N];
+            int val = 0;
+            int size = 0;
             int ans = 1;
-            for(int i=0; i<N; i++) {
-                dp[i] = 1;
-                for(int j=0; j<=i-1; j++) {
-                    if(arr[j]<arr[i]) {
-                        dp[i] = Math.max(dp[i], dp[j]+1);
+            for (int i = 0; i < N; i++) {
+                val = sc.nextInt();
+
+                int l = 0;
+                int r = size;
+                while (l < r) {
+                    int m = (l + r) / 2;
+                    if (lis[m] < val) {
+                        l = m + 1;
+                    } else {
+                        r = m;
                     }
-                    ans = Math.max(ans, dp[i]);
                 }
+                lis[r] = val;
+                if(r==size) {
+                    size++;
+                }
+                ans = Math.max(ans, size);
             }
 
             answer.append(String.format("#%d %d\n", test_case, ans));
