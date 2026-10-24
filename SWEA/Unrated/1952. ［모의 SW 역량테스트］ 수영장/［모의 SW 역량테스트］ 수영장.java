@@ -1,59 +1,46 @@
-
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
 
 // 수영장
-public class Solution {
+class Solution {
 
-	static int day, month, month3, year;
-	static int[] plan = new int[12];
-	static int minCost;
+    static int[] dp;
 
-	public static void main(String[] args) {
-		Scanner sc = new Scanner(System.in);
-		StringBuffer answer = new StringBuffer();
+    public static void main(String args[]) throws Exception {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = null;
+        StringBuffer answer = new StringBuffer();
 
-		int T = sc.nextInt();
-		for (int test_case = 1; test_case <= T; test_case++) {
-			day = sc.nextInt();
-			month = sc.nextInt();
-			month3 = sc.nextInt();
-			year = sc.nextInt();
+        int T = Integer.parseInt(br.readLine());
 
-			for (int i = 0; i < 12; i++) {
-				plan[i] = sc.nextInt();
-			}
+        for (int test_case = 1; test_case <= T; test_case++) {
+            st = new StringTokenizer(br.readLine());
+            int day = Integer.parseInt(st.nextToken());
+            int month = Integer.parseInt(st.nextToken());
+            int month3 = Integer.parseInt(st.nextToken());
+            int year = Integer.parseInt(st.nextToken());
 
-			minCost = year;
-			dfs(0, 0);
+            st = new StringTokenizer(br.readLine());
+            dp = new int[13];
 
-			answer.append(String.format("#%d %d\n", test_case, minCost));
-		}
+            for (int i = 1; i <= 12; i++) {
+                int d = dp[i - 1] + Integer.parseInt(st.nextToken()) * day; // 1일 이용권
+                int m1 = dp[i - 1] + month; // 1달 이용권
+                int m3 = (i - 3 < 0 ? 0 : dp[i - 3]) + month3; // 3달 이용권
+                dp[i] = Math.min(d, Math.min(m1, Math.min(m3, year)));
+            }
 
-		System.out.println(answer);
-		sc.close();
-	}
+            answer.append(String.format("#%d %d\n", test_case, dp[12]));
+        }
 
-	public static void dfs(int cnt, int cost) {
-		if (cost >= minCost) { // 이미 최소 비용을 넘긴 경우
-			return;
-		}
-
-		if (cnt >= 12) { // 1월부터 12월까지의 이용 비용이 최소 비용인 경우
-			minCost = cost;
-			return;
-		}
-
-		// 1일 이용권
-		dfs(cnt + 1, cost + day * plan[cnt]);
-
-		// 1달 이용권
-		dfs(cnt + 1, cost + month);
-
-		// 3달 이용권
-		dfs(cnt + 3, cost + month3);
-
-		// 12달 이용권
-		dfs(cnt + 12, cost + year);
-	}
-
+        System.out.println(answer);
+    }
 }
+/*
+2
+10 40 100 300
+0 0 2 9 1 5 0 0 0 0 0 0
+10 100 50 300
+0 0 0 0 0 0 0 0 6 2 7 8
+ */
